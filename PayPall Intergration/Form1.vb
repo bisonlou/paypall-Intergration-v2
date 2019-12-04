@@ -62,7 +62,7 @@ Public Class Form1
                       "dbo.Salary_Generation ON dbo.Increment.Increment_Id = dbo.Salary_Generation.Increment_ID INNER JOIN " & _
                       "dbo.PRODUCT_MASTER ON dbo.Increment.Product_ID = dbo.PRODUCT_MASTER.Product_ID " & _
 "WHERE (dbo.Salary_Generation.Month = " + MonthVal + ") AND (dbo.Salary_Generation.Year = " + Year + ") AND (dbo.PRODUCT_MASTER.Product_Name = 'Research') AND " & _
-                      "(dbo.Branch_Master.Branch_Name = 'ACBF')"
+                      "(dbo.Branch_Master.Branch_Name = 'GOU')"
 
         Dim QueryCmd As New SqlCommand(Query, conn)
         Dim dataadapter As New SqlDataAdapter(QueryCmd)
@@ -86,40 +86,6 @@ Public Class Form1
         ProgressBar1.Value = 30
 
 
-        Dim TTIR As String = "SELECT SUM(Net_Amount), SUM([5%]), SUM([10%]), SUM(PAYE), SUM(LST_Amount) " & _
-"FROM dbo.ppiTTI_Research WHERE (Month = " + MonthVal + ") AND (Year = " + Year + ")"
-
-        Dim TTIRCmd As New SqlCommand(TTIR, conn)
-        Dim TTIRda As New SqlDataAdapter(TTIRCmd)
-        Dim TTIRds As New DataSet()
-        conn.Open()
-        TTIRda.Fill(ds, "tblSalaryTTIR")
-        conn.Close()
-
-        ProgressBar1.Value = 40
-
-
-        Dim ACBFS As String = "SELECT ISNULL(SUM(dbo.Salary_Generation.Net_Amount),0)," & _
-        "ISNULL(SUM(0.05 * dbo.Salary_Generation.Total_Earn_Amount),0)," & _
-        "ISNULL(SUM(0.1 * dbo.Salary_Generation.Total_Earn_Amount),0)," & _
-        "ISNULL(SUM(dbo.Salary_Generation.Goods_Amount),0), ISNULL(SUM(dbo.Salary_Generation.LST_Amount),0) " & _
-"FROM dbo.Branch_Master INNER JOIN " & _
-                    "dbo.Increment ON dbo.Branch_Master.Branch_ID = dbo.Increment.Branch_ID INNER JOIN " & _
-                    "dbo.Salary_Generation ON dbo.Increment.Increment_Id = dbo.Salary_Generation.Increment_ID INNER JOIN " & _
-                    "dbo.PRODUCT_MASTER ON dbo.Increment.Product_ID = dbo.PRODUCT_MASTER.Product_ID " & _
-"WHERE (dbo.Salary_Generation.Month = " + MonthVal + ") AND (dbo.Salary_Generation.Year = " + Year + ") AND (dbo.PRODUCT_MASTER.Product_Name = 'Support') AND " & _
-                    "(dbo.Branch_Master.Branch_Name = 'ACBF')"
-
-        Dim ACBFSCmd As New SqlCommand(ACBFS, conn)
-        Dim ACBFSda As New SqlDataAdapter(ACBFSCmd)
-        Dim ACBFSds As New DataSet()
-        conn.Open()
-        ACBFSda.Fill(ds, "tblSalaryACBFS")
-        conn.Close()
-
-
-        ProgressBar1.Value = 50
-
         Dim GOUS As String = "SELECT SUM(dbo.Salary_Generation.Net_Amount), SUM(0.05 * dbo.Salary_Generation.Total_Earn_Amount), SUM(0.1 * dbo.Salary_Generation.Total_Earn_Amount), SUM(dbo.Salary_Generation.Goods_Amount), SUM(dbo.Salary_Generation.LST_Amount) " & _
 "FROM dbo.Branch_Master INNER JOIN " & _
                   "dbo.Increment ON dbo.Branch_Master.Branch_ID = dbo.Increment.Branch_ID INNER JOIN " & _
@@ -136,24 +102,6 @@ Public Class Form1
         conn.Close()
 
 
-        ProgressBar1.Value = 60
-
-        Dim TTIS As String = "SELECT SUM(dbo.Salary_Generation.Net_Amount), SUM(0.05 * dbo.Salary_Generation.Total_Earn_Amount), SUM(0.1 * dbo.Salary_Generation.Total_Earn_Amount), SUM(dbo.Salary_Generation.Goods_Amount), SUM(dbo.Salary_Generation.LST_Amount) " & _
-"FROM dbo.Branch_Master INNER JOIN " & _
-                     "dbo.Increment ON dbo.Branch_Master.Branch_ID = dbo.Increment.Branch_ID INNER JOIN " & _
-                     "dbo.Salary_Generation ON dbo.Increment.Increment_Id = dbo.Salary_Generation.Increment_ID INNER JOIN " & _
-                     "dbo.PRODUCT_MASTER ON dbo.Increment.Product_ID = dbo.PRODUCT_MASTER.Product_ID " & _
-"WHERE (dbo.Salary_Generation.Month = " + MonthVal + ") AND (dbo.Salary_Generation.Year = " + Year + ") AND (dbo.PRODUCT_MASTER.Product_Name = 'Support') AND " & _
-                     "(dbo.Branch_Master.Branch_Name = 'TTI')"
-
-        Dim TTISCmd As New SqlCommand(TTIS, conn)
-        Dim TTISda As New SqlDataAdapter(TTISCmd)
-        Dim TTISds As New DataSet()
-        conn.Open()
-        TTISda.Fill(ds, "tblSalaryTTIS")
-        conn.Close()
-
-
         ProgressBar1.Value = 70
 
         Dim Gratuity As String = "SELECT round(SUM(0.11 * dbo.GRATUITY.Basic),0)" & _
@@ -166,10 +114,10 @@ Public Class Form1
         GratuityDa.Fill(GratuityDs, "tblGratuity")
         conn.Close()
 
-        Dim EDLoanDeduction As String = "SELECT 0.5 * ISNULL(dbo.Emp_Loan_Payment_Detail.Amount,0) AS HalfLoan " & _
+        Dim EDLoanDeduction As String = "SELECT ISNULL(dbo.Emp_Loan_Payment_Detail.Amount,0) AS Loan " & _
 "FROM dbo.Emp_Loan_Payment INNER JOIN " & _
 "dbo.Emp_Loan_Payment_Detail ON dbo.Emp_Loan_Payment.Loan_Payment_Id = dbo.Emp_Loan_Payment_Detail.Loan_Payment_Id " & _
-"WHERE (dbo.Emp_Loan_Payment.Emp_Id = 1) AND (DATEPART(MM, dbo.Emp_Loan_Payment.Payment_Date) = " + MonthVal + ")"
+"WHERE (dbo.Emp_Loan_Payment.Emp_Id = 1) AND (DATEPART(MM, dbo.Emp_Loan_Payment.Payment_Date) = " + MonthVal + ") AND (DATEPART(YYYY, dbo.Emp_Loan_Payment.Payment_Date) = " + Year + ")"
 
         Dim EDLoanDeductionCmd As New SqlCommand(EDLoanDeduction, conn)
         Dim dsEDLoanDedu As New DataSet()
@@ -195,13 +143,7 @@ Public Class Form1
         Dim NetLine1 As Byte() = New UTF8Encoding(True).GetBytes(JDate.ToString("MM-dd-yy") + "," + Chr(34) + "7" + Chr(34) + "," + Chr(34) + "Net Pay For " + Month + " " + Year + Chr(34) + Environment.NewLine)
         fs.Write(NetLine1, 0, NetLine1.Length)
 
-        Dim NetLine2 As Byte() = New UTF8Encoding(True).GetBytes("92000000," + "-" + ds.Tables("tblSalary").Rows(0).Item(0).ToString + Environment.NewLine)
-        fs.Write(NetLine2, 0, NetLine2.Length)
-
-        Dim NetLine3 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalary").Rows(0).Item(0).ToString + Environment.NewLine)
-        fs.Write(NetLine3, 0, NetLine3.Length)
-
-        Dim GOURNet As Decimal = ds.Tables("tblSalaryGOUR").Rows(0).Item(0)
+        Dim GOURNet As Decimal = ds.Tables("tblSalary").Rows(0).Item(0)
         Dim GOURNetNew As Decimal = (GOURNet - EDHalfLoan).ToString
 
 
@@ -211,37 +153,12 @@ Public Class Form1
         Dim NetLine5 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + GOURNetNew.ToString + Environment.NewLine)
         fs.Write(NetLine5, 0, NetLine5.Length)
 
-        Dim TTIRNet As Decimal = ds.Tables("tblSalaryTTIR").Rows(0).Item(0)
-        Dim TTIRNetNew As Decimal = (TTIRNet + EDHalfLoan).ToString
-
-
-        Dim NetLine6 As Byte() = New UTF8Encoding(True).GetBytes("92000000," + "-" + TTIRNetNew.ToString + Environment.NewLine)
-        fs.Write(NetLine6, 0, NetLine6.Length)
-
-        Dim NetLine7 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + TTIRNetNew.ToString + Environment.NewLine)
-        fs.Write(NetLine7, 0, NetLine7.Length)
-
-
-        Dim NetLine8 As Byte() = New UTF8Encoding(True).GetBytes("92000000," + "-" + ds.Tables("tblSalaryACBFS").Rows(0).Item(0).ToString + Environment.NewLine)
-        fs.Write(NetLine8, 0, NetLine8.Length)
-
-        Dim NetLine9 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryACBFS").Rows(0).Item(0).ToString + Environment.NewLine)
-        fs.Write(NetLine9, 0, NetLine9.Length)
-
-
         Dim NetLine10 As Byte() = New UTF8Encoding(True).GetBytes("92000000," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(0).ToString + Environment.NewLine)
         fs.Write(NetLine10, 0, NetLine10.Length)
 
         Dim NetLine11 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryGOUS").Rows(0).Item(0).ToString + Environment.NewLine)
         fs.Write(NetLine11, 0, NetLine11.Length)
 
-
-        Dim NetLine12 As Byte() = New UTF8Encoding(True).GetBytes("92000000," + "-" + ds.Tables("tblSalaryTTIS").Rows(0).Item(0).ToString + Environment.NewLine)
-        fs.Write(NetLine12, 0, NetLine12.Length)
-
-        Dim NetLine13 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryTTIS").Rows(0).Item(0).ToString)
-        fs.Write(NetLine13, 0, NetLine13.Length)
-        fs.Close()
 
         '----------------------PAYE----------------------------
 
@@ -252,10 +169,10 @@ Public Class Form1
         Dim PAYELine1 As Byte() = New UTF8Encoding(True).GetBytes(JDate.ToString("MM-dd-yy") + "," + Chr(34) + "7" + Chr(34) + "," + Chr(34) + "PAYE For " + Month + " " + Year + Chr(34) + Environment.NewLine)
         PAYEFs.Write(PAYELine1, 0, PAYELine1.Length)
 
-        Dim PAYELine2 As Byte() = New UTF8Encoding(True).GetBytes("93000001," + "-" + ds.Tables("tblSalary").Rows(0).Item(3).ToString + Environment.NewLine)
+        Dim PAYELine2 As Byte() = New UTF8Encoding(True).GetBytes("93000001," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(3).ToString + Environment.NewLine)
         PAYEFs.Write(PAYELine2, 0, PAYELine2.Length)
 
-        Dim PAYELine3 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalary").Rows(0).Item(3).ToString + Environment.NewLine)
+        Dim PAYELine3 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryGOUS").Rows(0).Item(3).ToString + Environment.NewLine)
         PAYEFs.Write(PAYELine3, 0, PAYELine3.Length)
 
 
@@ -265,34 +182,6 @@ Public Class Form1
         Dim PAYELine5 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryGOUR").Rows(0).Item(3).ToString + Environment.NewLine)
         PAYEFs.Write(PAYELine5, 0, PAYELine5.Length)
 
-
-        Dim PAYELine6 As Byte() = New UTF8Encoding(True).GetBytes("93000001," + "-" + ds.Tables("tblSalaryTTIR").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine6, 0, PAYELine6.Length)
-
-        Dim PAYELine7 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryTTIR").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine7, 0, PAYELine7.Length)
-
-
-        Dim PAYELine8 As Byte() = New UTF8Encoding(True).GetBytes("93000001," + "-" + ds.Tables("tblSalaryACBFS").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine8, 0, PAYELine8.Length)
-
-        Dim PAYELine9 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryACBFS").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine9, 0, PAYELine9.Length)
-
-
-        Dim PAYELine10 As Byte() = New UTF8Encoding(True).GetBytes("93000001," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine10, 0, PAYELine10.Length)
-
-        Dim PAYELine11 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryGOUS").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine11, 0, PAYELine11.Length)
-
-
-        Dim PAYELine12 As Byte() = New UTF8Encoding(True).GetBytes("93000001," + "-" + ds.Tables("tblSalaryTTIS").Rows(0).Item(3).ToString + Environment.NewLine)
-        PAYEFs.Write(PAYELine12, 0, PAYELine12.Length)
-
-        Dim PAYELine13 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryTTIS").Rows(0).Item(3).ToString)
-        PAYEFs.Write(PAYELine13, 0, PAYELine13.Length)
-        PAYEFs.Close()
 
         ProgressBar1.Value = 80
         '-------------------------------NSSF---------------------------
@@ -317,75 +206,19 @@ Public Class Form1
         NSSFFs.Write(NSSF10Line5, 0, NSSF10Line5.Length)
 
 
-        Dim NSSF5Line6 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryGOUR").Rows(0).Item(1).ToString + Environment.NewLine)
+        Dim NSSF5Line6 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(1).ToString + Environment.NewLine)
         NSSFFs.Write(NSSF5Line6, 0, NSSF5Line6.Length)
 
-        Dim NSSF5Line7 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryGOUR").Rows(0).Item(1).ToString + Environment.NewLine)
+        Dim NSSF5Line7 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryGOUS").Rows(0).Item(1).ToString + Environment.NewLine)
         NSSFFs.Write(NSSF5Line7, 0, NSSF5Line7.Length)
 
 
-        Dim NSSF10Line8 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryGOUR").Rows(0).Item(2).ToString + Environment.NewLine)
+        Dim NSSF10Line8 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(2).ToString + Environment.NewLine)
         NSSFFs.Write(NSSF10Line8, 0, NSSF10Line8.Length)
 
-        Dim NSSF10Line9 As Byte() = New UTF8Encoding(True).GetBytes("20000007," + ds.Tables("tblSalaryGOUR").Rows(0).Item(2).ToString + Environment.NewLine)
+        Dim NSSF10Line9 As Byte() = New UTF8Encoding(True).GetBytes("20000007," + ds.Tables("tblSalaryGOUS").Rows(0).Item(2).ToString + Environment.NewLine)
         NSSFFs.Write(NSSF10Line9, 0, NSSF10Line9.Length)
 
-
-        Dim NSSF5Line10 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryTTIR").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line10, 0, NSSF5Line10.Length)
-
-        Dim NSSF5Line11 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryTTIR").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line11, 0, NSSF5Line11.Length)
-
-
-        Dim NSSF10Line12 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryTTIR").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line12, 0, NSSF10Line12.Length)
-
-        Dim NSSF10Line13 As Byte() = New UTF8Encoding(True).GetBytes("20000007," + ds.Tables("tblSalaryTTIR").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line13, 0, NSSF10Line13.Length)
-
-
-        Dim NSSF5Line14 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryACBFS").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line14, 0, NSSF5Line14.Length)
-
-        Dim NSSF5Line15 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryACBFS").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line15, 0, NSSF5Line15.Length)
-
-
-        Dim NSSF10Line16 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryACBFS").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line16, 0, NSSF10Line16.Length)
-
-        Dim NSSF10Line17 As Byte() = New UTF8Encoding(True).GetBytes("24000007," + ds.Tables("tblSalaryACBFS").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line17, 0, NSSF10Line17.Length)
-
-
-        Dim NSSF5Line18 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line18, 0, NSSF5Line18.Length)
-
-        Dim NSSF5Line19 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryGOUS").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line19, 0, NSSF5Line19.Length)
-
-
-        Dim NSSF10Line20 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line20, 0, NSSF10Line20.Length)
-
-        Dim NSSF10Line21 As Byte() = New UTF8Encoding(True).GetBytes("24000007," + ds.Tables("tblSalaryGOUS").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line21, 0, NSSF10Line21.Length)
-
-
-        Dim NSSF5Line22 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryTTIS").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line22, 0, NSSF5Line22.Length)
-
-        Dim NSSF5Line23 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryTTIS").Rows(0).Item(1).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF5Line23, 0, NSSF5Line23.Length)
-
-
-        Dim NSSF10Line24 As Byte() = New UTF8Encoding(True).GetBytes("93000002," + "-" + ds.Tables("tblSalaryTTIS").Rows(0).Item(2).ToString + Environment.NewLine)
-        NSSFFs.Write(NSSF10Line24, 0, NSSF10Line24.Length)
-
-        Dim NSSF10Line25 As Byte() = New UTF8Encoding(True).GetBytes("24000007," + ds.Tables("tblSalaryTTIS").Rows(0).Item(2).ToString)
-        NSSFFs.Write(NSSF10Line25, 0, NSSF10Line25.Length)
-        NSSFFs.Close()
 
         '---------------------------LST-----------------------------------
 
@@ -410,34 +243,12 @@ Public Class Form1
         Dim LSTLine5 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryGOUR").Rows(0).Item(4).ToString + Environment.NewLine)
         LSTFs.Write(LSTLine5, 0, LSTLine5.Length)
 
-
-        Dim LSTLine6 As Byte() = New UTF8Encoding(True).GetBytes("93000003," + "-" + ds.Tables("tblSalaryTTIR").Rows(0).Item(4).ToString + Environment.NewLine)
-        LSTFs.Write(LSTLine6, 0, LSTLine6.Length)
-
-        Dim LSTLine7 As Byte() = New UTF8Encoding(True).GetBytes("20000005," + ds.Tables("tblSalaryTTIR").Rows(0).Item(4).ToString + Environment.NewLine)
-        LSTFs.Write(LSTLine7, 0, LSTLine7.Length)
-
-
-        Dim LSTLine8 As Byte() = New UTF8Encoding(True).GetBytes("93000003," + "-" + ds.Tables("tblSalaryACBFS").Rows(0).Item(4).ToString + Environment.NewLine)
-        LSTFs.Write(LSTLine8, 0, LSTLine8.Length)
-
-        Dim LSTLine9 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryACBFS").Rows(0).Item(4).ToString + Environment.NewLine)
-        LSTFs.Write(LSTLine9, 0, LSTLine9.Length)
-
-
         Dim LSTLine10 As Byte() = New UTF8Encoding(True).GetBytes("93000003," + "-" + ds.Tables("tblSalaryGOUS").Rows(0).Item(4).ToString + Environment.NewLine)
         LSTFs.Write(LSTLine10, 0, LSTLine10.Length)
 
         Dim LSTLine11 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryGOUS").Rows(0).Item(4).ToString + Environment.NewLine)
         LSTFs.Write(LSTLine11, 0, LSTLine11.Length)
 
-
-        Dim LSTLine12 As Byte() = New UTF8Encoding(True).GetBytes("93000003," + "-" + ds.Tables("tblSalaryTTIS").Rows(0).Item(4).ToString + Environment.NewLine)
-        LSTFs.Write(LSTLine12, 0, LSTLine12.Length)
-
-        Dim LSTLine13 As Byte() = New UTF8Encoding(True).GetBytes("24000005," + ds.Tables("tblSalaryTTIS").Rows(0).Item(4).ToString)
-        LSTFs.Write(LSTLine13, 0, LSTLine13.Length)
-        LSTFs.Close()
 
         ProgressBar1.Value = 100
 

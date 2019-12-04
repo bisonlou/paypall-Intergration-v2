@@ -30,3 +30,14 @@ C:\Users\Bison\Documents\Visual Studio 2013\Projects\PayPall Intergration\PayPal
 C:\Users\Bison\Documents\Visual Studio 2013\Projects\PayPall Intergration\PayPall Intergration\obj\Release\PayPall_Intergration.Resources.resources
 C:\Users\Bison\Documents\Visual Studio 2013\Projects\PayPall Intergration\PayPall Intergration\obj\Release\PayPall_Intergration.SplashScreen.resources
 C:\Users\Bison\Documents\Visual Studio 2013\Projects\PayPall Intergration\PayPall Intergration\obj\Release\PayPall Intergration.vbproj.GenerateResource.Cache
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\bin\Release\PayPall Intergration.exe.config
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall Intergration.exe
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall Intergration.xml
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall Intergration.pdb
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\bin\Release\PayPall Intergration.exe
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\bin\Release\PayPall Intergration.pdb
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\bin\Release\PayPall Intergration.xml
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall_Intergration.Form1.resources
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall_Intergration.Resources.resources
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall_Intergration.SplashScreen.resources
+C:\Users\User\Documents\paypall-Intergration-v2-master\PayPall Intergration\obj\Release\PayPall Intergration.vbproj.GenerateResource.Cache
